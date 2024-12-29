@@ -1,8 +1,8 @@
 /*
 {
   echo '#include <jln/mp/list/pop_front.hpp>'
-  echo 'using namespace jln::mp;
-  echo 'using input = pop_front<>::f<void';
+  echo 'using namespace jln::mp;'
+  echo 'using input = pop_front<>::f<void'
   rg '^(\d+)\s+(\d+)' -r', list<number<$1>, number<$2>>' input
   echo '>;'
 } > day1.txt
@@ -40,7 +40,7 @@ using input = list<
 #include <jln/mp/number/math.hpp>
 
 #if !defined(PART) || PART == 1
-using part = zip_with<sort<>, zip_with<sub<abs<>>, add<>>>;
+using part = zip_with<sort<>, zip_with<sub<abs<>>, add<>>>; // 765748
 #else
 struct part2_impl
 {
@@ -63,7 +63,7 @@ struct part2_impl
     >
   >::template f<l1>;
 };
-using part = zip<part2_impl>;
+using part = zip<part2_impl>; // 27732508
 #endif
 
 using Result = unpack<part>::f<input>;
