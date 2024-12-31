@@ -1,11 +1,16 @@
 /*
 {
-  echo '#include <jln/mp/list/pop_front.hpp>'
+  echo '#include <jln/mp/list/list.hpp>'
+  echo '#include <jln/mp/number/number.hpp>'
   echo 'using namespace jln::mp;'
-  echo 'using input = pop_front<>::f<void'
-  sed -E 's/ />, number</g;s/^/, list<number</;s/$/>>/' input
+  echo 'using input = list<'
+  sed -E '
+    s/ />, number</g
+    s/^/, list<number</;s/$/>>/
+    1s/,/ /
+  '
   echo '>;'
-} > day2.txt
+} < input > day2.hpp
 */
 
 #if 0
@@ -22,7 +27,7 @@ using input = list<
   emp::numbers<9, 1, 2>
 >;
 #else
-#include "day2.txt"
+#include "day2.hpp"
 #endif
 
 #include <jln/mp/algorithm/transform.hpp>

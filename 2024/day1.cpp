@@ -1,11 +1,15 @@
 /*
 {
-  echo '#include <jln/mp/list/pop_front.hpp>'
+  echo '#include <jln/mp/list/list.hpp>'
+  echo '#include <jln/mp/number/number.hpp>'
   echo 'using namespace jln::mp;'
-  echo 'using input = pop_front<>::f<void'
-  rg '^(\d+)\s+(\d+)' -r', list<number<$1>, number<$2>>' input
+  echo 'using input = list<'
+  sed -E '
+    s/^([0-9]+)\s+([0-9]+)/, list<number<\1>, number<\2>>/g
+    1s/,/ /
+  '
   echo '>;'
-} > day1.txt
+} < input > day1.hpp
 */
 
 /*
@@ -25,7 +29,7 @@ using input = list<
   list<number<13>, number<23>>
 >;
 #else
-#include "day1.txt"
+#include "day1.hpp"
 #endif
 
 #include <jln/mp/algorithm/sort.hpp>

@@ -1,7 +1,8 @@
-#include <jln/mp/list/pop_front.hpp>
+#include <jln/mp/list/list.hpp>
+#include <jln/mp/number/number.hpp>
 using namespace jln::mp;
-using input = pop_front<>::f<void
-, list<number<11>, number<12>, number<15>, number<18>, number<19>, number<18>>
+using input = list<
+  list<number<11>, number<12>, number<15>, number<18>, number<19>, number<18>>
 , list<number<84>, number<86>, number<88>, number<89>, number<92>, number<92>>
 , list<number<18>, number<19>, number<21>, number<23>, number<24>, number<25>, number<29>>
 , list<number<56>, number<59>, number<60>, number<61>, number<63>, number<66>, number<73>>

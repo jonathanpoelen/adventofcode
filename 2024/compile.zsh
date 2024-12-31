@@ -3,7 +3,7 @@ compile() {
   local TIMEFMT='%*E'
   time timeout 8 \
     ${COMP:-g++} -I ${INC:-~/projects/jln.mpl/include} -DPART=${PART:-1} \
-    -DJLN_MP_MAX_CALL_ELEMENT=20000 \
+    -DJLN_MP_MAX_CALL_ELEMENT=30000 \
     -fdiagnostics-color=always -std=c++20 \
     -fsyntax-only "$@" \
 }

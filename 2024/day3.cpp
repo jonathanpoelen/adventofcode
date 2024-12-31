@@ -1,11 +1,18 @@
 /*
 {
-  echo '#include <jln/mp/list/pop_front.hpp>'
+  echo '#include <jln/mp/list/list.hpp>'
+  echo '#include <jln/mp/number/number.hpp>'
   echo 'using namespace jln::mp;'
-  echo 'using input = pop_front<>::f<void'
-  sed -E 's/./&\n/g' | sed -E "s/^([^'])/,number<'\\1'>/;t;s/./,number<'\\\''>/"
+  echo 'using input = list<'
+  sed -E 's/./&\n/g' | sed -E "
+    s/^([^'])/, number<'\\1'>/
+    ta
+    s/./, number<'\\\''>/
+    :a
+    1s/,/ /
+  "
   echo '>;'
-} < input > day2.txt
+} < input > day3.hpp
 */
 
 #if 0
@@ -28,7 +35,7 @@ struct to_input
 
 using input = emp::make_int_sequence_v_c<sizeof(s) - 1, to_input>::from<s>;
 #else
-#include "day3.txt"
+#include "day3.hpp"
 #endif
 
 #include <jln/mp/algorithm/make_int_sequence.hpp>
