@@ -33,8 +33,10 @@ using input = list<
 #endif
 
 #include <jln/mp/algorithm/transform.hpp>
-#include <jln/mp/list/take_front.hpp>
-#include <jln/mp/list/drop_front.hpp>
+#include <jln/mp/algorithm/reverse.hpp>
+#include <jln/mp/algorithm/rotate.hpp>
+#include <jln/mp/list/push_back.hpp>
+#include <jln/mp/functional/if.hpp>
 #include <jln/mp/number/operators.hpp>
 
 
@@ -45,76 +47,6 @@ template<class U>
 static constexpr int_t select_value<0, U> = U::value;
 
 
-template<uint_t a, uint_t b>
-inline constexpr uint_t umax_c_v = a < b ? b : a;
-
-template<uint_t a, uint_t b>
-inline constexpr int_t umin_c_v = a < b ? a : b;
-
-
-template<uint_t r, int_t step, int_t... ns>
-inline constexpr uint_t remaining_max_value = step;
-
-template<uint_t r, int_t step, int_t n, int_t... ns>
-inline constexpr uint_t remaining_max_value<r, step, n, ns...> =
-  remaining_max_value<
-    r,
-    umin_c_v<
-      step * n < step + n
-        ? step + n
-        : step * n,
-      r
-    >,
-    ns...
-  >;
-
-
-template<int_t r, int_t step, int_t... ns>
-struct count_result1;
-
-template<int_t r, int_t step, int_t n, int_t... ns>
-struct count_result1<r, step, n, ns...>
-{
-  static constexpr int_t value = select_value<
-    count_result1<
-      step * n <= r && r <= remaining_max_value<r, step * n, ns...> ? r : 0,
-      step * n, ns...
-    >::value,
-    count_result1<
-      step + n <= r && r <= remaining_max_value<r, step + n, ns...> ? r : 0,
-      step + n, ns...
-    >
-  >;
-};
-
-template<int_t step, int_t n, int_t... ns>
-struct count_result1<0, step, n, ns...>
-  : false_
-{};
-
-// for optimization
-template<int_t r, int_t step, int_t n>
-struct count_result1<r, step, n>
-  : number<r == step + n || r == step * n ? r : 0>
-{};
-
-template<int_t step, int_t n>
-struct count_result1<0, step, n>
-  : false_
-{};
-
-template<int_t r, int_t step>
-struct count_result1<r, step>
-  : number<r == step ? r : 0>
-{};
-
-
-#if !defined(PART) || PART == 1
-
-using algo = transform<unpack<lift_v<count_result1>>, add<>>; // 6392012777720 | 6s | 662Mio
-
-#else
-
 template<int_t n>
 inline constexpr int_t shift_v
   = n < 10 ? 10
@@ -123,137 +55,65 @@ inline constexpr int_t shift_v
   : 10000;
 
 
-template<uint_t r, int_t step, int_t... ns>
-inline constexpr uint_t remaining_max_value2 = step;
-
-template<uint_t r, int_t step, int_t n, int_t... ns>
-inline constexpr uint_t remaining_max_value2<r, step, n, ns...> =
-  remaining_max_value2<
-    r,
-    umin_c_v<
-      umax_c_v<
-        step * n < step + n
-          ? step + n
-          : step * n,
-        step * shift_v<n> + n
-      >,
-      r
-    >,
-    ns...
-  >;
-
-
-template<int_t r, int_t step, int_t... ns>
-struct count_result2_impl;
-
-template<int_t r, int_t step, int_t n, int_t... ns>
-struct count_result2_impl<r, step, n, ns...>
+template<int_t part, int_t step, int_t n, int_t... ns>
+struct check_reversed
 {
-  static constexpr bool cont = r <= remaining_max_value2<r, step, n, ns...>;
-
-  static constexpr int_t value = select_value<
+  static constexpr int_t value =
     select_value<
-      count_result2_impl<
-        step * shift_v<n> + n <= r && cont ? r : 0,
-        step * shift_v<n> + n,
-        ns...
-      >::value,
-      count_result2_impl<
-        step * n <= r && cont ? r : 0,
-        step * n,
+      select_value<
+        check_reversed<part, step / n * n == step ? step / n : -1, ns...>::value,
+        check_reversed<part, n <= step ? step - n : -1, ns...>
+      >,
+      check_reversed<
+        part,
+        part == 2 && step % shift_v<n> == n ? step / shift_v<n> : -1,
         ns...
       >
+    >;
+};
+
+template<int_t part, int_t n, int_t... ns>
+struct check_reversed<part, -1, n, ns...>
+  : false_
+{};
+
+template<int_t part, int_t n>
+struct check_reversed<part, -1, n>
+  : false_
+{};
+
+template<int_t part, int_t step, int_t n>
+struct check_reversed<part, step, n>
+  : number<step == n>
+{};
+
+
+template<int_t part>
+using resolve =
+  transform<
+    unpack<
+      if_<
+        rotate_c<
+          1,
+          push_back<
+            number<part>,
+            reverse<lift_v<check_reversed>>
+          >
+        >,
+        front<>
+      >
     >,
-    count_result2_impl<
-      step + n <= r && cont ? r : 0,
-      step + n,
-      ns...
-    >
+    add<>
   >;
-};
-
-template<int_t step, int_t n, int_t... ns>
-struct count_result2_impl<0, step, n, ns...>
-  : false_
-{};
-
-template<int_t r, int_t step>
-struct count_result2_impl<r, step>
-  : number<r == step ? r : 0>
-{};
-
-// for optization
-template<int_t r, int_t step, int_t n>
-struct count_result2_impl<r, step, n>
-{
-  static constexpr int_t value =
-    r == step * shift_v<n> + n
-    ||
-    r == step * n
-    ||
-    r == step + n
-
-    ? r
-    : 0
-    ;
-};
-
-// fix ambiguity (for optization)
-template<int_t step, int_t n>
-struct count_result2_impl<0, step, n>
-  : false_
-{};
-
-// for optization
-template<int_t r, int_t step, int_t n, int_t nn>
-struct count_result2_impl<r, step, n, nn>
-{
-  static constexpr int_t value =
-    r == (step * shift_v<n> + n) * shift_v<nn> + nn
-    ||
-    r == (step * shift_v<n> + n) * nn
-    ||
-    r == (step * shift_v<n> + n) + nn
-
-    ||
-
-    r == (step * n) * shift_v<nn> + nn
-    ||
-    r == (step * n) * nn
-    ||
-    r == (step * n) + nn
-
-    ||
-
-    r == (step + n) * shift_v<nn> + nn
-    ||
-    r == (step + n) * nn
-    ||
-    r == (step + n) + nn
-
-    ? r
-    : 0
-    ;
-};
-
-// fix ambiguity (for optization)
-template<int_t step, int_t n, int_t nn>
-struct count_result2_impl<0, step, n, nn>
-  : false_
-{};
 
 
+#if !defined(PART) || PART == 1
 
-template<int_t r, int_t step, int_t n, int_t... ns>
-struct count_result2
-{
-  static constexpr int_t value = select_value<
-    count_result1<r, step, n, ns...>::value,
-    count_result2_impl<r, step, n, ns...>
-  >;
-};
+using algo = resolve<1>; // 6392012777720
 
-using algo = transform<unpack<lift_v<count_result2>>, add<>>; // 61561126043536 | 2 min | 10 Gio
+#else
+
+using algo = resolve<2>; // 61561126043536
 
 #endif
 

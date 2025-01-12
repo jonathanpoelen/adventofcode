@@ -10,7 +10,7 @@ compile() {
   fi
   tt timeout ${TIMEOUT:-8} \
     ${COMP:-g++} -I ${INC:-~/projects/jln.mpl/include} -DPART=${PART:-1} \
-    -DJLN_MP_MAX_CALL_ELEMENT=30000 \
+    -DJLN_MP_MAX_CALL_ELEMENT=${MAX_ELEM:-30000} \
     -fdiagnostics-color=always -std=c++20 \
     -fsyntax-only "$@"
 }
