@@ -73,7 +73,7 @@ using input = emp::make_int_sequence_v_c<10, to_input>::from<s>;
 #include <jln/mp/list/at.hpp>
 #include <jln/mp/number/operators.hpp>
 #include <jln/mp/utility/is_base_of.hpp>
-#include <jln/mp/utility/flat_inheritance.hpp>
+#include <jln/mp/utility/inherit.hpp>
 
 #ifndef ENABLE_TRACE
 # define ENABLE_TRACE 0
@@ -106,7 +106,7 @@ struct traverse_result<list<Ls...> TRACE(step...)>
   using indices = transform<unpack<at1<>>>::f<Ls...>;
   using l1 = emp::unpack_append<indices, arrange, list<>>;
   using l2 = emp::unpack<indices, arrange, list<>>;
-  using set1 = unpack<lift<flat_inheritance>>::f<l1>;
+  using set1 = unpack<lift<inherit>>::f<l1>;
   using duplicate = typename unpack<transform<is_base_of<set1>, add0<>>>::template f<l2>;
   using type = number<emp::size_v<l1> + emp::size_v<l2> - duplicate::value>;
 };
