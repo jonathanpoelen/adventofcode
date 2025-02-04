@@ -13,3 +13,4 @@ PART=1 COMP=g++ INC=jln-include-path TIMEOUT=8 MEM=0 ./compile.zsh day1.cpp [com
 - ⚠ day 6: 2 min and 10 GiB (g++)
 - ⚠ day 9: 1 min and 12 GiB (g++)
 - ⚠ day 12: 35 s and 4 GiB (g++)
+- ⚠ day 15: 2 min 30 s and 1.2 GiB (g++)
