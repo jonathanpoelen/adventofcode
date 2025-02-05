@@ -2,7 +2,7 @@ Solution using C++ meta-programming.
 
 Inputs are transformed into types and the result is computed at compile time and displayed via a compiler error.
 
-Uses the jln.mp library (https://github.com/jonathanpoelen/jln.mp).
+Uses the [jln.mp](https://github.com/jonathanpoelen/jln.mp) library on the commit [c3bfa5c](https://github.com/jonathanpoelen/jln.mp/tree/c3bfa5c245d736027eeed060709f10369fe24966). Newer commits will be incompatible due to upcoming library changes.
 
 ```sh
 ./compile.zsh day1.cpp
